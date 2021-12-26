@@ -1,10 +1,13 @@
 package org.example.kupibilet;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
@@ -34,13 +37,16 @@ public class MainPage extends AbstractPage {
     @FindBy(xpath = "(//div[@data-test='search-form-wrapper']//div[contains(@class, 'ResponsiveWrappers__FlexBoxColumnOnMobile-cz63ln-2')]//input)[1]")
     private WebElement inputFromDate;
 
+    @FindBy(xpath = "(//div[@data-test='search-form-wrapper']//div[contains(@class, 'ResponsiveWrappers__FlexBoxColumnOnMobile-cz63ln-2')]//input)[2]")
+    private WebElement inputToDate;
+
     @FindBy(xpath = "(//div[contains(@class, 'styled__NavbarButtons-sc-11ct9zd-3')]//button)[2]")
     private WebElement datesDropdownNextMonth;
 
-    @FindBy(xpath = "(//div[contains(@class, 'DayPicker-Day')]//span[text()='18'])[1]")
+    @FindBy(xpath = "(//div[@class='DayPicker-Day']//span[text()='18'])[1]")
     private WebElement fromDateButton;
 
-    @FindBy(css = ".styled__HeaderPaddingWrapper-kn0ij9-1 .styled__StyledButtonText-sc-1c07g7v-1")
+    @FindBy(xpath = "//button/span[text()='Обратный билет не нужен']/..")
     private WebElement noTicketBackButton;
 
     @FindBy(xpath = "//button[@data-test='search-ticket-button']")
@@ -77,10 +83,26 @@ public class MainPage extends AbstractPage {
                 .perform();
     }
 
-    public void fillInDates() {
+    public void openFromDate() {
         this.inputFromDate.click();
+    }
+
+    public void openToDate() {
+        this.inputToDate.click();
+    }
+
+    public void openNextMonthDates() {
         this.datesDropdownNextMonth.click();
+    }
+
+    public void fillInFromDate() {
+        this.openFromDate();
+        this.openNextMonthDates();
         this.fromDateButton.click();
+    }
+
+    public void fillInNoTicketBack() {
+        this.openToDate();
         this.noTicketBackButton.click();
     }
 
@@ -106,13 +128,19 @@ public class MainPage extends AbstractPage {
     }
 
     public void clickLogo() {
-        this.logo.click();
+        Actions actions = new Actions(this.getDriver());
+        actions.moveToElement(this.logo)
+                .click()
+                .pause(Duration.ofSeconds(3))
+                .build()
+                .perform();
     }
 
     public void redirectSpainPage() {
         Actions actions = new Actions(this.getDriver());
         actions.moveToElement(this.footerSpain)
                 .click(this.footerSpain)
+                .pause(Duration.ofSeconds(3))
                 .build()
                 .perform();
     }
